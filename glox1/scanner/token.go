@@ -10,6 +10,8 @@ const (
 	RIGHT_PAREN
 	LEFT_BRACE
 	RIGHT_BRACE
+	LEFT_BRACKET
+	RIGHT_BRACKET
 	COMMA
 	DOT
 	MINUS
@@ -25,11 +27,15 @@ const (
 	GREATER_EQUAL
 	LESS
 	LESS_EQUAL
+	PLUS_PLUS
+	MINUS_MINUS
 	IDENTIFIER // Literals
 	STRING
 	NUMBER
 	AND // Keywords
+	BREAK
 	CLASS
+	CONTINUE
 	ELSE
 	FALSE
 	FUN
@@ -61,6 +67,8 @@ func (tok *Token) String() string {
 	case RIGHT_PAREN: tokStr = "RIGHT_PAREN"
 	case LEFT_BRACE: tokStr = "LEFT_BRACE"
 	case RIGHT_BRACE: tokStr = "RIGHT_BRACE"
+	case LEFT_BRACKET: tokStr = "LEFT_BRACKET"
+	case RIGHT_BRACKET: tokStr = "RIGHT_BRACKET"
 	case COMMA: tokStr = "COMMA"
 	case DOT: tokStr = "DOT"
 	case MINUS: tokStr = "MINUS"
@@ -76,6 +84,8 @@ func (tok *Token) String() string {
 	case GREATER_EQUAL: tokStr = "GREATER_EQUAL"
 	case LESS: tokStr = "LESS"
 	case LESS_EQUAL: tokStr = "LESS_EQUAL"
+	case PLUS_PLUS: tokStr = "PLUS_PLUS"
+	case MINUS_MINUS: tokStr = "MINUS_MINUS"
 	case IDENTIFIER: tokStr = "IDENTIFIER"
 	case STRING: tokStr = "STRING"
 	case NUMBER: tokStr = "NUMBER"
@@ -95,6 +105,8 @@ func (tok *Token) String() string {
 	case TRUE: tokStr = "TRUE"
 	case VAR: tokStr = "VAR"
 	case WHILE: tokStr = "WHILE"
+	case BREAK: tokStr = "BREAK"
+	case CONTINUE: tokStr = "CONTINUE"
 	case EOF: tokStr = "EOF"
 	}
 

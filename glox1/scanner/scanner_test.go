@@ -5,8 +5,8 @@ import (
 )
 
 func TestSymbolScanner(t *testing.T) {
-	text := `(()){} // grouping symbols
-
+	text := `(()){}[ // grouping symbols
+]
 * + - / // arithmetic operators
 // blank comment line
 !=!<>>=<=;== // other operators
@@ -18,6 +18,9 @@ func TestSymbolScanner(t *testing.T) {
 		{RIGHT_PAREN, ")", nil, 1},
 		{LEFT_BRACE, "{", nil, 1},
 		{RIGHT_BRACE, "}", nil, 1},
+		{LEFT_BRACKET, "[", nil, 1},
+		{RIGHT_BRACKET, "]", nil, 2},
+		{SEMICOLON, "", nil, 2},
 		{STAR, "*", nil, 3},
 		{PLUS, "+", nil, 3},
 		{MINUS, "-", nil, 3},
@@ -62,13 +65,16 @@ func TestLiteralScanner(t *testing.T) {
 		{NUMBER, "123", 123.0, 1},
 		{NUMBER, "12.0", 12.0, 1},
 		{NUMBER, "11.", 11.0, 1},
+		{SEMICOLON, "", nil, 1},
 		{NUMBER, "1e2", 100.0, 2},
 		{NUMBER, "1.0e2", 100.0, 2},
 		{NUMBER, "1.0e+2", 100.0, 2},
 		{NUMBER, "2.5e-1", 0.25, 2},
 		{NUMBER, "1.e2", 100.0, 2},
+		{SEMICOLON, "", nil, 2},
 		{STRING, `""`, "", 3},
 		{STRING, `"hello"`, "hello", 3},
+		{SEMICOLON, "", nil, 3},
 		{EOF, "", nil, 3},
 	}
 
@@ -95,8 +101,9 @@ func TestLiteralScanner(t *testing.T) {
 
 func TestIdentifierScanner(t *testing.T) {
 	text := `and class else false for
-    fun if nil or print
-return super this true while
+    fun if nil or print break continue
+return
+super this true while
 myvar
 my_var?!
 m2222m`
@@ -111,15 +118,22 @@ m2222m`
 		{NIL, "nil", nil, 2},
 		{OR, "or", nil, 2},
 		{PRINT, "print", nil, 2},
+		{BREAK, "break", nil, 2},
+		{CONTINUE, "continue", nil, 2},
+		{SEMICOLON, "", nil, 2},
 		{RETURN, "return", nil, 3},
-		{SUPER, "super", nil, 3},
-		{THIS, "this", nil, 3},
-		{TRUE, "true", nil, 3},
-		{WHILE, "while", nil, 3},
-		{IDENTIFIER, "myvar", nil, 4},
-		{IDENTIFIER, "my_var?!", nil, 5},
-		{IDENTIFIER, "m2222m", nil, 6},
-		{EOF, "", nil, 6},
+		{SEMICOLON, "", nil, 3},
+		{SUPER, "super", nil, 4},
+		{THIS, "this", nil, 4},
+		{TRUE, "true", nil, 4},
+		{WHILE, "while", nil, 4},
+		{IDENTIFIER, "myvar", nil, 5},
+		{SEMICOLON, "", nil, 5},
+		{IDENTIFIER, "my_var?!", nil, 6},
+		{SEMICOLON, "", nil, 6},
+		{IDENTIFIER, "m2222m", nil, 7},
+		{SEMICOLON, "", nil, 7},
+		{EOF, "", nil, 7},
 	}
 
 	scanner := NewScanner(text)

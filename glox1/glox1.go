@@ -27,7 +27,7 @@ func RunPrompt() {
 	for {
 		fmt.Print("> ")
 		if !scanner.Scan() { break }
-		Run(scanner.Bytes())
+		Run(string(scanner.Bytes()))
 		error.HadError = false
 	}
 }
@@ -39,12 +39,12 @@ func RunFile(file string) {
 		os.Exit(64)
 	}
 
-	Run(text)
+	Run(string(text))
 
 	if error.HadError { os.Exit(65) }
 }
 
-func Run(text []byte) {
+func Run(text string) {
 	scanner := scanner.NewScanner(text)
 	tokens := scanner.Scan()
 

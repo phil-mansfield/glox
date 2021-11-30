@@ -9,10 +9,10 @@ import (
 
 var (
 	keywordMap = map[string]TokenType {
-		"and": AND, "class": CLASS, "else": ELSE, "false": FALSE, "for": FOR,
-			"fun": FUN, "if": IF, "nil": NIL, "or": OR, "print": PRINT,
-			"return": RETURN, "super": SUPER, "this": THIS, "true": TRUE,
-			"while": WHILE,
+		"and": AND, "break": BREAK, "class": CLASS, "continue": CONTINUE,
+			"else": ELSE, "false": FALSE, "for": FOR, "fun": FUN, "if":IF,
+			"nil": NIL, "or": OR, "print": PRINT, "return": RETURN,
+			"super": SUPER, "this": THIS, "true": TRUE, "while": WHILE,
 	}
 )
 
@@ -32,6 +32,15 @@ func (s *Scanner) Scan() []Token {
 		s.scanToken()
 	}
 
+	if len(s.tokens) > 0 {
+		switch s.tokens[len(s.tokens) - 1].Type {
+		case IDENTIFIER, NUMBER, STRING, RETURN, BREAK, CONTINUE,
+			PLUS_PLUS, MINUS_MINUS, RIGHT_PAREN,
+			RIGHT_BRACE, RIGHT_BRACKET:
+			s.tokens = append(s.tokens, Token{SEMICOLON, "", nil, s.line})
+		}
+	}
+
 	s.tokens = append(s.tokens, Token{ EOF, "", nil, s.line})
 	return s.tokens
 }
@@ -45,15 +54,37 @@ func (s *Scanner) scanToken() {
 
 	switch c {
 	case ' ', '\r', '\t':
-	case '\n': s.line++
+	case '\n':
+		if len(s.tokens) > 0 {
+			switch s.tokens[len(s.tokens) - 1].Type {
+			case IDENTIFIER, NUMBER, STRING, RETURN, BREAK, CONTINUE,
+				PLUS_PLUS, MINUS_MINUS, RIGHT_PAREN,
+				RIGHT_BRACE, RIGHT_BRACKET:
+				s.tokens = append(s.tokens, Token{SEMICOLON, "", nil, s.line})
+			}
+		}
+		s.line++
 	case '(': s.addToken(LEFT_PAREN, nil)
 	case ')': s.addToken(RIGHT_PAREN, nil)
 	case '{': s.addToken(LEFT_BRACE, nil)
 	case '}': s.addToken(RIGHT_BRACE, nil)
+	case '[': s.addToken(LEFT_BRACKET, nil)
+	case ']': s.addToken(RIGHT_BRACKET, nil)
 	case ',': s.addToken(COMMA, nil)
 	case '.': s.addToken(DOT, nil)
-	case '-': s.addToken(MINUS, nil)
-	case '+': s.addToken(PLUS, nil)
+	case '-':
+		if s.match('-') {
+			s.addToken(MINUS_MINUS, nil)
+		} else {
+			s.addToken(MINUS, nil)
+		}
+
+	case '+':
+		if s.match('+') {
+			s.addToken(PLUS_PLUS, nil)
+		} else {
+			s.addToken(PLUS, nil)
+		}
 	case ';': s.addToken(SEMICOLON, nil)
 	case '*': s.addToken(STAR, nil)
 	case '!':
